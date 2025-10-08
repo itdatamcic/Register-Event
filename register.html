@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCIC-Register</title>
+
+    <link rel="icon" type="image/png" href="https://img5.pic.in.th/file/secure-sv1/-72f36e2606e6a703c.png">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet">
+    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --background-color: #ecf0f1;
+            --form-background: #ffffff;
+            --input-border-color: #bdc3c7;
+            --input-focus-color: #3498db;
+            --text-color: #2c3e50;
+            --label-color: #555;
+            --danger-color: #e74c3c;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        .form-container {
+            background-color: var(--form-background);
+            padding: 2.5rem 3rem;
+            max-width: 700px;
+            width: 100%;
+            margin: 2rem auto;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-top: 5px solid var(--secondary-color);
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .logo-img {
+            max-width: 120px;
+            height: auto;
+            border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        }
+
+        .form-title {
+            text-align: center;
+            font-weight: 700;
+            margin-bottom: 2.5rem;
+            color: var(--primary-color);
+            font-size: 2rem;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: var(--label-color);
+            margin-bottom: .5rem;
+        }
+
+        .form-control, .custom-select, .select2-container .select2-selection--single {
+            border-radius: 8px;
+            height: 48px;
+            border: 1px solid var(--input-border-color);
+            transition: all 0.3s ease;
+            background-color: #f8f9fa;
+        }
+
+        .form-control:focus, .custom-select:focus, .select2-container--default .select2-selection--single:focus {
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+            border-color: var(--input-focus-color);
+            background-color: var(--form-background);
+        }
+        
+        .select2-container--default .select2-selection--single {
+            border: 1px solid var(--input-border-color);
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 46px;
+            padding-left: 1rem;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 46px;
+        }
+        
+        .btn-submit {
+            background: var(--secondary-color);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 30px;
+            font-weight: 700;
+            color: white;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
+            font-size: 1.1rem;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.3);
+            background: #2980b9;
+        }
+
+        label.required::after {
+            content: " *";
+            color: var(--danger-color);
+        }
+        
+        .input-group .btn-location {
+            border-top-right-radius: 8px;
+            border-bottom-right-radius: 8px;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            width: 50px;
+        }
+        
+        .input-group .btn-location:hover {
+            background-color: #2980b9;
+        }
+
+        .input-group .form-control {
+            border-right: none;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="form-container">
+        
+        <div class="logo-container">
+            <img src="https://img2.pic.in.th/pic/modern-cass-international-cosmetic-vietnam_400x400_341568856.png?text=YOUR+LOGO" alt="Logo" class="logo-img">
+        </div>
+
+        <h3 class="form-title">ลงทะเบียนร่วมกิจกรรม</h3>
+
+        <form method="post" autocomplete="off" name="data-sheet" id="registerForm">
+            <input type="hidden" name="userID" id="userID">
+            <input type="hidden" name="profileLine" id="profileLine">
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="fullName" class="form-label required">ชื่อ-สกุล</label>
+                    <input type="text" class="form-control" id="fullName" name="ชื่อ-สกุล" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="shopName" class="form-label required">ชื่อร้านเสริมสวย/บาร์เบอร์</label>
+                    <input type="text" class="form-control" id="shopName" name="ชื่อร้านเสริมสวย/บาร์เบอร์" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="checkin" class="form-label required">เช็คอิน</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="checkin" name="เช็คอิน" placeholder="กดปุ่ม 📍 เพื่อระบุและตรวจสอบตำแหน่ง" readonly required>
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary btn-location" type="button" id="getLocationBtn"><i class="fas fa-map-marker-alt"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="eventResult" style="display:none;">
+                 <input type="hidden" id="eventLocation" name="สถานที่จัดงาน">
+                 <input type="hidden" id="memo" name="Memo">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="province" class="form-label required">จังหวัด</label>
+                    <select class="custom-select" id="province" name="จังหวัด" required>
+                        <option value="">-- กรุณาเลือกจังหวัด --</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="district" class="form-label required">อำเภอ</label>
+                    <select class="custom-select" id="district" name="อำเภอ" required>
+                        <option value="">-- กรุณาเลือกอำเภอ --</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="subdistrict" class="form-label required">ตำบล</label>
+                    <select class="custom-select" id="subdistrict" name="ตำบล" required>
+                        <option value="">-- กรุณาเลือกตำบล --</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="zipcode" class="form-label required">รหัสไปรษณีย์</label>
+                    <input type="text" class="form-control" id="zipcode" name="รหัสไปรษณีย์" readonly required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="address" class="form-label required">บ้านเลขที่</label>
+                <input type="text" class="form-control" id="address" name="บ้านเลขที่" required>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="phone" class="form-label required">เบอร์โทร</label>
+                    <input type="tel" class="form-control" id="phone" name="เบอร์โทร" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="age" class="form-label required">อายุ</label>
+                    <input type="number" class="form-control" id="age" name="อายุ" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="status" class="form-label required">สถานะ</label>
+                <select class="custom-select" id="status" name="สถานะ" required>
+                    <option value="">-- เลือกสถานะ --</option>
+                    <option value="เจ้าของร้าน">เจ้าของร้าน</option>
+                    <option value="พนักงาน">พนักงาน</option>
+                </select>
+            </div>
+
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-submit">บันทึกข้อมูล</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // JavaScript remains unchanged
+    async function main() {
+        await liff.init({ liffId: "2008243853-w5KYZ5oN" });
+        if (!liff.isLoggedIn()) {
+            liff.login();
+        } else {
+            const profile = await liff.getProfile();
+            document.getElementById('userID').value = profile.userId;
+            document.getElementById('profileLine').value = profile.displayName;
+        }
+    }
+    main();
+
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwSSP4ZfSDb-9FEsDWBfQYYQgBf1P6ROcosYQPwljnmg2ch_wMcfVX-iK-nCcePvE0C/exec';
+    const form = document.forms['data-sheet'];
+    let addressData = [];
+    let eventLocationsData = [];
+
+    $(document).ready(function() {
+        $('#province, #district, #subdistrict, #status').select2({
+              minimumResultsForSearch: Infinity 
+        });
+        
+        $('#province, #district, #subdistrict').select2();
+
+        const addressDataUrl = scriptURL + '?action=getAddressData';
+        fetch(addressDataUrl)
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.length > 0) {
+                    addressData = data;
+                    populateProvinces();
+                }
+            })
+            .catch(err => {
+                console.error('Failed to load address data:', err);
+                Swal.fire('เกิดข้อผิดพลาด!', `ไม่สามารถโหลดข้อมูลที่อยู่ได้: ${err.message}`, 'error');
+            });
+
+        const eventLocationsUrl = scriptURL + '?action=getEventLocations';
+        fetch(eventLocationsUrl)
+            .then(res => res.json())
+            .then(data => {
+                eventLocationsData = data;
+            }).catch(err => {
+                console.error('ไม่สามารถโหลดข้อมูลสถานที่จัดงานได้:', err);
+                 Swal.fire('เกิดข้อผิดพลาด!', `ไม่สามารถโหลดข้อมูลสถานที่จัดงานได้`, 'error');
+            });
+    });
+
+    function populateProvinces() {
+        const provinces = [...new Set(addressData.map(row => row[0]))].sort();
+        provinces.forEach(province => {
+            $('#province').append(new Option(province, province));
+        });
+    }
+
+    $('#province').on('change', function() {
+        const selectedProvince = $(this).val();
+        $('#district').html('<option value="">-- กรุณาเลือกอำเภอ --</option>').val('').trigger('change');
+        $('#subdistrict').html('<option value="">-- กรุณาเลือกตำบล --</option>').val('').trigger('change');
+        $('#zipcode').val('');
+        if (!selectedProvince) return;
+        const districts = [...new Set(addressData.filter(row => row[0] === selectedProvince).map(row => row[1]))].sort();
+        districts.forEach(district => {
+            $('#district').append(new Option(district, district));
+        });
+    });
+
+    $('#district').on('change', function() {
+        const selectedProvince = $('#province').val();
+        const selectedDistrict = $(this).val();
+        $('#subdistrict').html('<option value="">-- กรุณาเลือกตำบล --</option>').val('').trigger('change');
+        $('#zipcode').val('');
+        if (!selectedDistrict) return;
+        const subdistricts = [...new Set(addressData.filter(row => row[0] === selectedProvince && row[1] === selectedDistrict).map(row => row[2]))].sort();
+        subdistricts.forEach(subdistrict => {
+            $('#subdistrict').append(new Option(subdistrict, subdistrict));
+        });
+    });
+
+    $('#subdistrict').on('change', function() {
+        const selectedProvince = $('#province').val();
+        const selectedDistrict = $('#district').val();
+        const selectedSubdistrict = $(this).val();
+        const match = addressData.find(row => row[0] === selectedProvince && row[1] === selectedDistrict && row[2] === selectedSubdistrict);
+        $('#zipcode').val(match ? match[3] : '');
+    });
+
+    function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+      var R = 6371;
+      var dLat = (lat2 - lat1) * (Math.PI / 180);
+      var dLon = (lon2 - lon1) * (Math.PI / 180);
+      var a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
+    }
+
+    $('#getLocationBtn').on('click', function() {
+        if (!navigator.geolocation) {
+            return Swal.fire('ข้อผิดพลาด', 'เบราว์เซอร์ของคุณไม่รองรับ Geolocation', 'error');
+        }
+        if (eventLocationsData.length === 0) {
+            return Swal.fire('กำลังโหลด', 'กรุณารอสักครู่ ข้อมูลสถานที่ยังไม่พร้อมใช้งาน', 'info');
+        }
+        Swal.fire({
+            title: 'กำลังตรวจสอบตำแหน่ง',
+            text: 'กรุณารอสักครู่...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        $('#checkin, #eventLocation, #memo').val('');
+        navigator.geolocation.getCurrentPosition(position => {
+            const userLat = position.coords.latitude;
+            const userLon = position.coords.longitude;
+            let foundLocation = false;
+            setTimeout(() => {
+                for (const event of eventLocationsData) {
+                    const eventName = event[0];
+                    const eventCoords = event[1].split(',').map(coord => parseFloat(coord.trim()));
+                    const eventMemo = event[2];
+                    const eventLat = eventCoords[0];
+                    const eventLon = eventCoords[1];
+                    const distance = getDistanceFromLatLonInKm(userLat, userLon, eventLat, eventLon);
+                    if (distance <= 10) {
+                        $('#checkin').val(`${userLat}, ${userLon}`);
+                        $('#eventLocation').val(eventName);
+                        $('#memo').val(eventMemo);
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'ตรวจสอบตำแหน่งสำเร็จ!',
+                            html: `คุณอยู่ในพื้นที่ของ: <b>${eventName}</b>`,
+                        });
+                        foundLocation = true;
+                        break;
+                    }
+                }
+                if (!foundLocation) {
+                    Swal.fire('นอกพื้นที่', 'ตำแหน่งของคุณอยู่นอกพื้นที่จัดงานที่กำหนด (ระยะห่างเกิน 10 กม.)', 'warning');
+                }
+            }, 500);
+        }, error => {
+            Swal.fire('ข้อผิดพลาด', 'ไม่สามารถเข้าถึงตำแหน่งได้ โปรดตรวจสอบการตั้งค่าเบราว์เซอร์', 'error');
+        });
+    });
+
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        Swal.fire({
+            title: 'กำลังบันทึกข้อมูล...',
+            text: 'กรุณารอสักครู่',
+            allowOutsideClick: false,
+            didOpen: () => { Swal.showLoading(); }
+        });
+        fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+            .then(response => response.json())
+            .then(data => {
+                if (data.result === 'success') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'บันทึกข้อมูลสำเร็จ!',
+                        showConfirmButton: false,
+                        timer: 2000
+                    }).then(() => {
+                        if(liff.isInClient()) {
+                            liff.closeWindow();
+                        } else {
+                            form.reset();
+                            $('#province, #district, #subdistrict, #status').val('').trigger('change');
+                        }
+                    });
+                } else { throw new Error(data.error || 'Unknown error occurred'); }
+            })
+            .catch(error => {
+                console.error('Error!', error.message);
+                Swal.fire('เกิดข้อผิดพลาด!', `ไม่สามารถบันทึกข้อมูลได้: ${error.message}`, 'error');
+            });
+    });
+</script>
+
+</body>
+</html>
