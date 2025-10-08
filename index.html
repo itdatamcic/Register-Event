@@ -236,7 +236,7 @@
                 <select class="custom-select" id="status" name="สถานะ" required>
                     <option value="">-- เลือกสถานะ --</option>
                     <option value="เจ้าของร้าน">เจ้าของร้าน</option>
-                    <option value="ผู้เข้าร่วมงาน">ผู้เข้าร่วมงาน</option>
+                    <option value="ผู้เข้าร่วมงาน" selected>ผู้เข้าร่วมงาน</option>
                 </select>
             </div>
 
@@ -251,9 +251,8 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    // JavaScript remains unchanged
     async function main() {
-        await liff.init({ liffId: "2008254230-Le6XvOoa" });
+        await liff.init({ liffId: "2008243853-w5KYZ5oN" });
         if (!liff.isLoggedIn()) {
             liff.login();
         } else {
@@ -264,7 +263,7 @@
     }
     main();
 
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbxUaunBVaIx7gv6_Ac9jopBoCtUZKvzUCRMxpOocOLN8czG-t5veYCuwqQi_8UCOA5C/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycby2NmsbUmv_6gTmM-dIKsDvDXx8f3WLcIp6TPRsmmMnwWrEJZJRQp0o4mkHwhKtJLTa/exec';
     const form = document.forms['data-sheet'];
     let addressData = [];
     let eventLocationsData = [];
@@ -352,6 +351,7 @@
       return R * c;
     }
 
+    // MODIFIED: Reworked the entire function for silent check-in
     $('#getLocationBtn').on('click', function() {
         if (!navigator.geolocation) {
             return Swal.fire('ข้อผิดพลาด', 'เบราว์เซอร์ของคุณไม่รองรับ Geolocation', 'error');
@@ -359,47 +359,51 @@
         if (eventLocationsData.length === 0) {
             return Swal.fire('กำลังโหลด', 'กรุณารอสักครู่ ข้อมูลสถานที่ยังไม่พร้อมใช้งาน', 'info');
         }
-        Swal.fire({
-            title: 'กำลังตรวจสอบตำแหน่ง',
-            text: 'กรุณารอสักครู่...',
-            allowOutsideClick: false,
-            didOpen: () => {
-                Swal.showLoading();
-            }
-        });
+
+        const $btn = $(this);
+        const originalIcon = $btn.html();
+        $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i>');
+
         $('#checkin, #eventLocation, #memo').val('');
+        $('#checkin').css('border-color', ''); // Reset border color
+
         navigator.geolocation.getCurrentPosition(position => {
             const userLat = position.coords.latitude;
             const userLon = position.coords.longitude;
             let foundLocation = false;
-            setTimeout(() => {
-                for (const event of eventLocationsData) {
-                    const eventName = event[0];
-                    const eventCoords = event[1].split(',').map(coord => parseFloat(coord.trim()));
-                    const eventMemo = event[2];
-                    const eventLat = eventCoords[0];
-                    const eventLon = eventCoords[1];
-                    const distance = getDistanceFromLatLonInKm(userLat, userLon, eventLat, eventLon);
-                    if (distance <= 10) {
-                        $('#checkin').val(`${userLat}, ${userLon}`);
-                        $('#eventLocation').val(eventName);
-                        $('#memo').val(eventMemo);
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'ตรวจสอบตำแหน่งสำเร็จ!',
-                            html: `คุณอยู่ในพื้นที่ของ: <b>${eventName}</b>`,
-                        });
-                        foundLocation = true;
-                        break;
-                    }
+            
+            for (const event of eventLocationsData) {
+                const eventName = event[0];
+                const eventCoords = event[1].split(',').map(coord => parseFloat(coord.trim()));
+                const eventMemo = event[2];
+                const eventLat = eventCoords[0];
+                const eventLon = eventCoords[1];
+                
+                const distance = getDistanceFromLatLonInKm(userLat, userLon, eventLat, eventLon);
+                
+                if (distance <= 15) { // Updated distance check to 15km
+                    $('#checkin').val(`${userLat}, ${userLon}`);
+                    $('#eventLocation').val(eventName);
+                    $('#memo').val(eventMemo);
+                    foundLocation = true;
+                    break;
                 }
-                if (!foundLocation) {
-                    Swal.fire('นอกพื้นที่', 'ตำแหน่งของคุณอยู่นอกพื้นที่จัดงานที่กำหนด (ระยะห่างเกิน 10 กม.)', 'warning');
-                }
-            }, 500);
+            }
+            
+            $btn.prop('disabled', false).html(originalIcon);
+
+            // Give subtle feedback on the input field
+            if (foundLocation) {
+                 $('#checkin').css('border-color', '#28a745'); // Green for success
+            } else {
+                 $('#checkin').css('border-color', '#dc3545'); // Red for out of area
+                 // No popup is shown as requested. The empty required field will prevent form submission.
+            }
+
         }, error => {
+            $btn.prop('disabled', false).html(originalIcon);
             Swal.fire('ข้อผิดพลาด', 'ไม่สามารถเข้าถึงตำแหน่งได้ โปรดตรวจสอบการตั้งค่าเบราว์เซอร์', 'error');
-        });
+        }, { timeout: 10000 }); // Add a timeout for the location request
     });
 
     form.addEventListener('submit', e => {
@@ -437,8 +441,4 @@
 </script>
 
 </body>
-
 </html>
-
-
-
