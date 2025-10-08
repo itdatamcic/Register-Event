@@ -236,7 +236,8 @@
                 <select class="custom-select" id="status" name="สถานะ" required>
                     <option value="">-- เลือกสถานะ --</option>
                     <option value="เจ้าของร้าน">เจ้าของร้าน</option>
-                    <option value="ผู้เข้าร่วมงาน" selected>ผู้เข้าร่วมงาน</option> </select>
+                    <option value="ผู้เข้าร่วมงาน" selected>ผู้เข้าร่วมงาน</option>
+                </select>
             </div>
 
             <div class="text-center mt-4">
@@ -251,7 +252,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     async function main() {
-        await liff.init({ liffId: "2008243853-w5KYZ5oN" });
+        await liff.init({ liffId: "2008243853-w5KYZ5oN" }); // <-- ตรวจสอบ Liff ID ของคุณ
         if (!liff.isLoggedIn()) {
             liff.login();
         } else {
@@ -262,7 +263,7 @@
     }
     main();
 
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbwh6dIdbYm0tt2h4QRvd1zYaWmulI2t8oE9mf1hDijrQ378oM_gZp3gkXaTrWZGWF2A/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzii2JuNP81dSSdtRaiIcQfjkxRU8d22ahAP4SUaF4P2DMv824jpLfdjYpsmLMZjTUW/exec'; // <-- ใส่ URL ของ Web App ของคุณ
     const form = document.forms['data-sheet'];
     let addressData = [];
     let eventLocationsData = [];
@@ -372,7 +373,6 @@
             let foundLocation = false;
             setTimeout(() => {
                 for (const event of eventLocationsData) {
-                    // event[0] คือ ชื่อสถานที่ (ไม่ใช้), event[1] คือ พิกัด, event[2] คือ Memo
                     const eventCoords = event[1].split(',').map(coord => parseFloat(coord.trim()));
                     const eventMemo = event[2];
                     const eventLat = eventCoords[0];
@@ -381,7 +381,7 @@
                     if (distance <= 10) {
                         $('#checkin').val(`${userLat}, ${userLon}`);
                         
-                        // ---- จุดที่แก้ไข 3: ปรับปรุงข้อมูลและการแสดงผลหลังเช็คอิน ----
+                        // แก้ไข: ปรับปรุงข้อมูลและการแสดงผลหลังเช็คอิน
                         $('#eventLocation').val('ผ่านการตรวจสอบตำแหน่ง'); // บันทึกข้อความนี้แทนชื่อสถานที่
                         $('#memo').val(eventMemo);
                         
@@ -390,7 +390,6 @@
                             title: 'ตรวจสอบตำแหน่งสำเร็จ!',
                             text: 'คุณอยู่ในพื้นที่จัดงานที่กำหนด', // ไม่แสดงชื่อสถานที่และ Memo
                         });
-                        // ---- จบจุดที่แก้ไข 3 ----
 
                         foundLocation = true;
                         break;
@@ -440,5 +439,4 @@
 </script>
 
 </body>
-
 </html>
