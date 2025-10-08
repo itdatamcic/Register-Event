@@ -183,8 +183,8 @@
             </div>
 
             <div id="eventResult" style="display:none;">
-                  <input type="hidden" id="eventLocation" name="สถานที่จัดงาน">
-                  <input type="hidden" id="memo" name="Memo">
+                   <input type="hidden" id="eventLocation" name="สถานที่จัดงาน">
+                   <input type="hidden" id="memo" name="Memo">
             </div>
 
             <div class="form-row">
@@ -262,7 +262,7 @@
     }
     main();
 
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbwQxGvFphXtH_7dM7JI7XvuzcvUGOH-M_bD6cQsyrPYF5Sa_FM3CQ-MUJVGlrWUl6AV/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwh6dIdbYm0tt2h4QRvd1zYaWmulI2t8oE9mf1hDijrQ378oM_gZp3gkXaTrWZGWF2A/exec';
     const form = document.forms['data-sheet'];
     let addressData = [];
     let eventLocationsData = [];
@@ -350,7 +350,6 @@
       return R * c;
     }
 
-    // ---- จุดที่แก้ไข 4: ปรับปรุง Logic การเช็คอินทั้งหมด ----
     $('#getLocationBtn').on('click', function() {
         if (!navigator.geolocation) {
             return Swal.fire('ข้อผิดพลาด', 'เบราว์เซอร์ของคุณไม่รองรับ Geolocation', 'error');
@@ -366,43 +365,39 @@
                 Swal.showLoading();
             }
         });
-
         $('#checkin, #eventLocation, #memo').val('');
         navigator.geolocation.getCurrentPosition(position => {
             const userLat = position.coords.latitude;
             const userLon = position.coords.longitude;
             let foundLocation = false;
-
             setTimeout(() => {
                 for (const event of eventLocationsData) {
-                    const eventCoordsString = event[0]; // พิกัดอยู่ที่ index 0
-                    const eventMemo = event[1];       // Memo อยู่ที่ index 1
-                    
-                    if (!eventCoordsString) continue; // ข้ามถ้าไม่มีข้อมูลพิกัด
-
-                    const eventCoords = eventCoordsString.split(',').map(coord => parseFloat(coord.trim()));
+                    // event[0] คือ ชื่อสถานที่ (ไม่ใช้), event[1] คือ พิกัด, event[2] คือ Memo
+                    const eventCoords = event[1].split(',').map(coord => parseFloat(coord.trim()));
+                    const eventMemo = event[2];
                     const eventLat = eventCoords[0];
                     const eventLon = eventCoords[1];
                     const distance = getDistanceFromLatLonInKm(userLat, userLon, eventLat, eventLon);
-                    
-                    // เพิ่มระยะเป็น 15 กม.
-                    if (distance <= 15) { 
+                    if (distance <= 10) {
                         $('#checkin').val(`${userLat}, ${userLon}`);
-                        $('#memo').val(eventMemo); // เก็บค่า Memo ที่เจอ
-                        // ไม่ต้องเก็บ eventLocation เพราะไม่ได้ใช้แสดงผลแล้ว
                         
-                        // แสดงข้อความสถานะใหม่
+                        // ---- จุดที่แก้ไข 3: ปรับปรุงข้อมูลและการแสดงผลหลังเช็คอิน ----
+                        $('#eventLocation').val('ผ่านการตรวจสอบตำแหน่ง'); // บันทึกข้อความนี้แทนชื่อสถานที่
+                        $('#memo').val(eventMemo);
+                        
                         Swal.fire({
                             icon: 'success',
                             title: 'ตรวจสอบตำแหน่งสำเร็จ!',
-                            text: 'คุณอยู่ในพื้นที่ที่กำหนด สามารถลงทะเบียนได้',
+                            text: 'คุณอยู่ในพื้นที่จัดงานที่กำหนด', // ไม่แสดงชื่อสถานที่และ Memo
                         });
+                        // ---- จบจุดที่แก้ไข 3 ----
+
                         foundLocation = true;
                         break;
                     }
                 }
                 if (!foundLocation) {
-                    Swal.fire('นอกพื้นที่', 'ตำแหน่งของคุณอยู่นอกพื้นที่จัดงานที่กำหนด (ระยะห่างเกิน 15 กม.)', 'warning');
+                    Swal.fire('นอกพื้นที่', 'ตำแหน่งของคุณอยู่นอกพื้นที่จัดงานที่กำหนด (ระยะห่างเกิน 10 กม.)', 'warning');
                 }
             }, 500);
         }, error => {
@@ -445,4 +440,5 @@
 </script>
 
 </body>
+
 </html>
