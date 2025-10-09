@@ -231,15 +231,16 @@
                 </div>
             </div>
 
-                        <div class="form-group">
+            <div class="form-group">
                 <label for="status" class="form-label required">สถานะ</label>
                 <select class="custom-select" id="status" name="สถานะ" required>
                     <option value="">-- เลือกสถานะ --</option>
                     <option value="เจ้าของร้าน">เจ้าของร้าน</option>
-                    <option value="ผู้เข้าร่วมงาน" selected>ผู้เข้าร่วมงาน</option>
+                    <option value="พนักงาน">พนักงาน</option>
                 </select>
             </div>
-                        <div class="text-center mt-4">
+
+            <div class="text-center mt-4">
                 <button type="submit" class="btn btn-submit">บันทึกข้อมูล</button>
             </div>
         </form>
@@ -263,7 +264,7 @@
     }
     main();
 
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbzEub9-zOWUFCktq5s6rZG3jiPnmI9Sbpautdzo3CsGGoRbcjbeDOvEWo0l9wu70nBx/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzZrpd0eG5E1JJ_SL1W3teiYXV5-igb3V9KLaBXs-OKoKzfmjJStq2vgIYPHw3bENhi/exec';
     const form = document.forms['data-sheet'];
     let addressData = [];
     let eventLocationsData = [];
@@ -383,13 +384,11 @@
                         $('#checkin').val(`${userLat}, ${userLon}`);
                         $('#eventLocation').val(eventName);
                         $('#memo').val(eventMemo);
-                            // ======================= จุดที่แก้ไข =======================
                         Swal.fire({
                             icon: 'success',
                             title: 'ตรวจสอบตำแหน่งสำเร็จ!',
-                            text: 'คุณอยู่ในพื้นที่จัดงานที่กำหนด'
+                            html: `คุณอยู่ในพื้นที่ของ: <b>${eventName}</b>`,
                         });
-                            // ======================= จบจุดที่แก้ไข =======================
                         foundLocation = true;
                         break;
                     }
