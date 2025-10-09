@@ -183,8 +183,8 @@
             </div>
 
             <div id="eventResult" style="display:none;">
-                <input type="hidden" id="eventLocation" name="สถานที่จัดงาน">
-                <input type="hidden" id="memo" name="Memo">
+                 <input type="hidden" id="eventLocation" name="สถานที่จัดงาน">
+                 <input type="hidden" id="memo" name="Memo">
             </div>
 
             <div class="form-row">
@@ -251,7 +251,7 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    // --- [ปรับปรุงใหม่ทั้งหมด] ---
+    // JavaScript remains unchanged
     async function main() {
         await liff.init({ liffId: "2008243853-w5KYZ5oN" });
         if (!liff.isLoggedIn()) {
@@ -264,84 +264,82 @@
     }
     main();
 
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbxHlxpHRYJjMAMSIsgJOFnaEUvEMbuTILHeB97X-Zw3vsIQC9NEG6OEjrgKVJ-_gAbv/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyJn7M5yw1EWXDD_5nce2OJ_juIAF3x3qs6q2UMBqBe9xA1cR-_r20OQ_qgeVsfMsCB/exec';
     const form = document.forms['data-sheet'];
+    let addressData = [];
     let eventLocationsData = [];
 
     $(document).ready(function() {
-        // เริ่มต้นใช้งาน Select2
-        $('#province, #district, #subdistrict, #status').select2();
+        $('#province, #district, #subdistrict, #status').select2({
+              minimumResultsForSearch: Infinity 
+        });
+        
+        $('#province, #district, #subdistrict').select2();
 
-        // 1. โหลดเฉพาะ "จังหวัด" ในตอนแรก (เร็วมาก)
-        fetch(scriptURL + '?action=getProvinces')
+        const addressDataUrl = scriptURL + '?action=getAddressData';
+        fetch(addressDataUrl)
             .then(response => response.json())
-            .then(provinces => {
-                provinces.forEach(province => {
-                    $('#province').append(new Option(province, province));
-                });
+            .then(data => {
+                if (data && data.length > 0) {
+                    addressData = data;
+                    populateProvinces();
+                }
             })
-            .catch(err => console.error('Error loading provinces:', err));
+            .catch(err => {
+                console.error('Failed to load address data:', err);
+                Swal.fire('เกิดข้อผิดพลาด!', `ไม่สามารถโหลดข้อมูลที่อยู่ได้: ${err.message}`, 'error');
+            });
 
-        // โหลดข้อมูลสถานที่จัดงาน (เหมือนเดิม)
-        fetch(scriptURL + '?action=getEventLocations')
+        const eventLocationsUrl = scriptURL + '?action=getEventLocations';
+        fetch(eventLocationsUrl)
             .then(res => res.json())
-            .then(data => { eventLocationsData = data; })
-            .catch(err => console.error('Error loading event locations:', err));
+            .then(data => {
+                eventLocationsData = data;
+            }).catch(err => {
+                console.error('ไม่สามารถโหลดข้อมูลสถานที่จัดงานได้:', err);
+                 Swal.fire('เกิดข้อผิดพลาด!', `ไม่สามารถโหลดข้อมูลสถานที่จัดงานได้`, 'error');
+            });
     });
 
-    // 2. เมื่อ "จังหวัด" ถูกเลือก -> ไปโหลด "อำเภอ"
+    function populateProvinces() {
+        const provinces = [...new Set(addressData.map(row => row[0]))].sort();
+        provinces.forEach(province => {
+            $('#province').append(new Option(province, province));
+        });
+    }
+
     $('#province').on('change', function() {
         const selectedProvince = $(this).val();
         $('#district').html('<option value="">-- กรุณาเลือกอำเภอ --</option>').val('').trigger('change');
         $('#subdistrict').html('<option value="">-- กรุณาเลือกตำบล --</option>').val('').trigger('change');
         $('#zipcode').val('');
-
-        if (selectedProvince) {
-            fetch(`${scriptURL}?action=getDistricts&province=${encodeURIComponent(selectedProvince)}`)
-                .then(response => response.json())
-                .then(districts => {
-                    districts.forEach(district => {
-                        $('#district').append(new Option(district, district));
-                    });
-                });
-        }
+        if (!selectedProvince) return;
+        const districts = [...new Set(addressData.filter(row => row[0] === selectedProvince).map(row => row[1]))].sort();
+        districts.forEach(district => {
+            $('#district').append(new Option(district, district));
+        });
     });
 
-    // 3. เมื่อ "อำเภอ" ถูกเลือก -> ไปโหลด "ตำบล"
     $('#district').on('change', function() {
         const selectedProvince = $('#province').val();
         const selectedDistrict = $(this).val();
         $('#subdistrict').html('<option value="">-- กรุณาเลือกตำบล --</option>').val('').trigger('change');
         $('#zipcode').val('');
-
-        if (selectedDistrict) {
-            fetch(`${scriptURL}?action=getSubdistricts&province=${encodeURIComponent(selectedProvince)}&district=${encodeURIComponent(selectedDistrict)}`)
-                .then(response => response.json())
-                .then(subdistricts => {
-                    subdistricts.forEach(subdistrict => {
-                        $('#subdistrict').append(new Option(subdistrict, subdistrict));
-                    });
-                });
-        }
+        if (!selectedDistrict) return;
+        const subdistricts = [...new Set(addressData.filter(row => row[0] === selectedProvince && row[1] === selectedDistrict).map(row => row[2]))].sort();
+        subdistricts.forEach(subdistrict => {
+            $('#subdistrict').append(new Option(subdistrict, subdistrict));
+        });
     });
 
-    // 4. เมื่อ "ตำบล" ถูกเลือก -> ไปโหลด "รหัสไปรษณีย์"
     $('#subdistrict').on('change', function() {
         const selectedProvince = $('#province').val();
         const selectedDistrict = $('#district').val();
         const selectedSubdistrict = $(this).val();
-        $('#zipcode').val('');
-        
-        if (selectedSubdistrict) {
-             fetch(`${scriptURL}?action=getZipcode&province=${encodeURIComponent(selectedProvince)}&district=${encodeURIComponent(selectedDistrict)}&subdistrict=${encodeURIComponent(selectedSubdistrict)}`)
-                .then(response => response.json())
-                .then(data => {
-                    $('#zipcode').val(data.zipcode);
-                });
-        }
+        const match = addressData.find(row => row[0] === selectedProvince && row[1] === selectedDistrict && row[2] === selectedSubdistrict);
+        $('#zipcode').val(match ? match[3] : '');
     });
 
-    // --- ส่วนของ Geolocation และการ Submit Form (ไม่ต้องแก้ไข) ---
     function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
       var R = 6371;
       var dLat = (lat2 - lat1) * (Math.PI / 180);
