@@ -63,7 +63,7 @@
         }
 
         .form-title {
-            text-align: center;
+            text-align: center;
             font-weight: 700;
             margin-bottom: 2.5rem;
             color: var(--primary-color);
@@ -264,7 +264,7 @@
     }
     main();
 
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbzZrpd0eG5E1JJ_SL1W3teiYXV5-igb3V9KLaBXs-OKoKzfmjJStq2vgIYPHw3bENhi/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbx9UxYz9YjX_0JBPA73I6rZ73kWa1oFGX7Q0xCW2kGYuGu6tAtqtQpGrtCUyIfWyDLO/exec';
     const form = document.forms['data-sheet'];
     let addressData = [];
     let eventLocationsData = [];
@@ -363,9 +363,7 @@
             title: 'กำลังตรวจสอบตำแหน่ง',
             text: 'กรุณารอสักครู่...',
             allowOutsideClick: false,
-            didOpen: () => {
-                Swal.showLoading();
-            }
+            didOpen: () => { Swal.showLoading(); }
         });
         $('#checkin, #eventLocation, #memo').val('');
         navigator.geolocation.getCurrentPosition(position => {
